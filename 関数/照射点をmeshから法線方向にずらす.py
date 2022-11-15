@@ -1,9 +1,3 @@
-#Input
-#mesh_list, List Access, Mesh
-
-#Output
-#a, ずれた点群
-
 import Rhino.Geometry as rg
 import ghpythonlib.components as ghcomp
 
@@ -15,22 +9,25 @@ def MovePoint(normal_unit, length, point):
     return point
 #ずらす長さ
 length = 0.1
-def NormalOffset_FromMesh(mesh_list):
+def NormalOffset_FromMesh(mesh):
     point_list = []
-    for num, mesh in enumerate(mesh_list):
-        result = ghcomp.FaceNormals(mesh)
-        points = result[0]
-        if isinstance(points, list):
-            for num in range(len(points)):
-                point = points[num]
-                normal_unit = result[1][num]
-                point = MovePoint(normal_unit, length, point)
-                point_list.append(point)
-        else:
-            point = points
-            normal_unit = result[1]
+    result = ghcomp.FaceNormals(mesh)
+    points = result[0]
+    if isinstance(points, list):
+        for num in range(len(points)):
+            point = points[num]
+            normal_unit = result[1][num]
             point = MovePoint(normal_unit, length, point)
             point_list.append(point)
+    else:
+        point = points
+        normal_unit = result[1]
+        point = MovePoint(normal_unit, length, point)
+        point_list.append(point)
     return point_list
 
-a = NormalOffset_FromMesh(mesh_list)
+a = []
+for mesh in mesh_list:
+    result = NormalOffset_FromMesh(mesh)
+    for point in result:
+        a.append(point)
