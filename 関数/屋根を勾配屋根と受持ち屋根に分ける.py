@@ -11,25 +11,36 @@
 
 import rhinoscriptsyntax as rs
 import Rhino.Geometry as rg
+import ghpythonlib.components as ghcomp
 import math
 
-face_list = []
-normal_vec = []
-charge_roof = []
-slope_roof = []
-non_roof = []
+#屋根を勾配屋根と受持ち屋根に分ける
+#-1: 雨が当たらない, 0: 受持ち屋根, 1: 勾配屋根
+def roof_judge(surface, rain_angle):
+    judge_angle = math.cos(math.radians(180 - rain_angle))
+    normal = rg.Surface.NormalAt(surface, 0.5, 0.5)
+    z = round(normal[2], 5) + 0.0
+    print(z)
+    if z == 1:
+        judge = 0
+    elif z <= judge_angle and z != 1:
+        judge = -1
+    else:
+        judge = 1
+    return judge
 
-judge_angle = math.cos(math.radians(180 - angle))
-for i in geo:
-    face = i.Faces
-    for k in face:
-        face_list.append(k)
-        normal = rg.Surface.NormalAt(k, 0.5, 0.5)
-        normal_vec.append(normal)
-        z = round(normal[2], 5) + 0.0
-        if z == 1:
-            charge_roof.append(k)
-        elif z < judge_angle:
-            non_roof.append(k)
-        else:
-            slope_roof.append(k)
+
+
+ChargeRoof_list = []
+SlopeRoof_list = []
+NonRoof_list = []
+for i in geometry:
+    facelist = i.Faces
+    for k in facelist:
+        judge = roof_judge(k, rain_angle)
+        if judge == 0:
+            ChargeRoof_list.append(k)
+        elif judge == 1:
+            SlopeRoof_list.append(k)
+        elif judge == -1:
+            NonRoof_list.append(k)
