@@ -17,20 +17,23 @@ import Grasshopper.Kernel.Data.GH_Path as gh_path
 import Grasshopper.DataTree as datatree
 
 #各角度を定義する
-max_angle = 90
-min_angel = int(angle_rainfall)
+max_angle = int(rain_angle)
+min_angel = 0
 vec_list = []
 step = 10
 axis1 = rg.Vector3d(0.0, 1.0, 0.0)
 axis2 = rg.Vector3d(0.0, 0.0, 1.0)
-for i in range(min_angel, max_angle, step):
+for i in range(min_angel, max_angle + 1, step):
     for k in range(0, 360, step):
-        angleRad1 = math.radians(i)
-        angleRad2 = math.radians(k)
-        vec = rg.Vector3d(-1.0, 0.0, 0.0)
-        re_vec1 = rg.Vector3d.Rotate(vec, angleRad1, axis1)
-        re_vec2 = rg.Vector3d.Rotate(vec, angleRad2, axis2)
-        vec_list.append(vec)
+        if i == 0:
+            break
+        else:
+            angleRad1 = math.radians(i)
+            angleRad2 = math.radians(k)
+            vec = rg.Vector3d(0.0, 0.0, 1.0)
+            re_vec1 = rg.Vector3d.Rotate(vec, angleRad1, axis1)
+            re_vec2 = rg.Vector3d.Rotate(vec, angleRad2, axis2)
+            vec_list.append(vec)
 def max_projected_area(mesh, barrier):
     #重心を求める
     centroid = []
