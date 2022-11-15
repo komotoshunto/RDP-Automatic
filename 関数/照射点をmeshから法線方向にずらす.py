@@ -28,6 +28,6 @@ def NormalOffset_FromMesh(mesh):
 
 a = []
 for mesh in mesh_list:
-    result = NormalOffset_FromMesh(mesh)
-    for point in result:
+    point_list = NormalOffset_FromMesh(mesh)
+    for point in point_list:
         a.append(point)
