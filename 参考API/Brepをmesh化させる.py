@@ -7,13 +7,17 @@
 
 import Rhino.Geometry as rg
 
-a = []
-param = rg.MeshingParameters()
-param.MaximumEdgeLength = len
-param.MinimumEdgeLength = len
-param.JaggedSeams = True
-for i in brep:
-    facelist = i.Faces
-    for face in facelist:
-        mesh = rg.Mesh.CreateFromSurface(face, param)
-        a.append(mesh)
+def MeshFromBrep(brep, edge_length):
+    mesh_list = []
+    param = rg.MeshingParameters()
+    param.MaximumEdgeLength = edge_length
+    param.MinimumEdgeLength = edge_length
+    param.JaggedSeams = True
+    for i in brep:
+        facelist = i.Faces
+        for face in facelist:
+            mesh = rg.Mesh.CreateFromSurface(face, param)
+            mesh_list.append(mesh)
+    return mesh_list
+
+a = MeshFromBrep(geometry, 1500)
