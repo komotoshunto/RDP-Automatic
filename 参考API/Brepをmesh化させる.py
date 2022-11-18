@@ -7,6 +7,7 @@
 
 import Rhino.Geometry as rg
 
+#Brepをmesh化させる
 def MeshFromBrep(brep, edge_length):
     mesh_list = []
     param = rg.MeshingParameters()
