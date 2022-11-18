@@ -4,6 +4,8 @@
 #Output
 #a, そのメッシュにあるFaceの法線リスト
 
+#問題点
+#メッシュ同士が結合された状態では、「mesh.FaceNormals」の部分が何も返されず、Noneになる。
 
 import Rhino.Geometry as rg
 
