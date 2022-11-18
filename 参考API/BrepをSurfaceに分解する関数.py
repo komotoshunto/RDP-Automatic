@@ -1,12 +1,11 @@
 #Input
-#x, List Access, Brep
+#brep_list, List Access, Brep
 
 #Output
 #a, サーフェスのリスト
 
-a = []
-for i in x:
-    face = i.Faces
-    for k in face:
-        print(k)
-        a.append(k)
+surface_list = []
+for brep in brep_list:
+    faces = brep.Faces
+    for face in faces:
+        surface_list.append(face)
