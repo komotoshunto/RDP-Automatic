@@ -10,7 +10,6 @@ import Rhino.Geometry as rg
 
 
 #Meshの各FaceをSurfaceにする関数
-#Meshの各FaceをSurfaceにする関数
 def SurfaceFromMesh(mesh):
     surface_list = []
     edges = ghcomp.FaceBoundaries(mesh)
