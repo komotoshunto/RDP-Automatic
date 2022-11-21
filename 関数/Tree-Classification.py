@@ -24,11 +24,10 @@ while len(adjacency) > 0:
     for j in sorted(pop_list, reverse=True):
         adjacency.pop(j)
 
+
 print(search_take_roof_list)
 print(adjacency)
 print(Total_area)
-
-
 
 #-------------------------------------------------------------------------------------------
 #[[17, 9, 13, 2, 3, 8, 1], [18, 14, 10, 4, 5], [19, 15, 16, 11, 12, 6, 7]]
