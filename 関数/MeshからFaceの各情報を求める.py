@@ -41,6 +41,9 @@ def SurfaceFromMesh(mesh):
     return surface_list, centroid_list, area_list
 
 
+surface = []
+centroid = []
+area = []
 surface_list, centroid_list, area_list  = SurfaceFromMesh(mesh)
 for i in range(len(surface_list)):
     surface.append(surface_list[i])
