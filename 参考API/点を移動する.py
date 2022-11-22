@@ -1,12 +1,19 @@
+#Input
+#x, Item Access, Point3d
+
 #Output
 #a, point
 
 
+import rhinoscriptsyntax as rs
 import Rhino.Geometry as rg
 
-a = rg.Point3d(0, 100, 0)
-vec = rg.Vector3d(0, 0, 100)
-transform = rg.Transform.Translation(vec)
-#指定した点（a）が変化するので、別の変数に代入できない
-rg.Point3d.Transform(a, transform)
+#ProjectPointに引っかからないように照射点をmeshから法線方向にずらす
+def MovePoint(point, vector, length):
+    rg.Vector3d.Unitize(vector)
+    normal = vector * length
+    transform = rg.Transform.Translation(normal)
+    rg.Point3d.Transform(point, transform)
+    return point
 
+a = MovePoint(x, rg.Vector3d(0, 5, 1), 1)
