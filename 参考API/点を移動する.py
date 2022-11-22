@@ -8,7 +8,7 @@
 import rhinoscriptsyntax as rs
 import Rhino.Geometry as rg
 
-#ProjectPointに引っかからないように照射点をmeshから法線方向にずらす
+#PointをVector方向へ指定の長さ分ずらす
 def MovePoint(point, vector, length):
     rg.Vector3d.Unitize(vector)
     normal = vector * length
