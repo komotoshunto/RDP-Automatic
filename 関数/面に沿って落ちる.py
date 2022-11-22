@@ -4,8 +4,11 @@
 #face_normal_vec, List Access, Vector3d
 
 #Output
-#mesh_list, mesh
-#locus_list, 重心から流れる軌跡
+#surface_list, 各MeshのFaceをSurface化したもの
+#area_list, surface_listの面積
+#locus_list, 雨の軌跡
+#LandingIndex_list, 各Surface化した面の雨が、落ちた先のSurfaceのインデックスを返す
+#LandingSurface_list, 
 
 
 import rhinoscriptsyntax as rs
@@ -92,36 +95,70 @@ def SurfaceFromMesh(mesh):
         centroid_list.append(area[1])
     return surface_list, centroid_list, area_list
 
+#雨の到着地点とその軌跡を返す関数
+def RainFlow(point, normal_vec, barriers, LandingSurface_list):
+    moved_point = MovePoint(point, normal_vec, 0.5)
+    descent_point = DescentPoint(moved_point, normal_vec, barriers)
+    projectpoint = ghcomp.ProjectPoint(descent_point, rg.Vector3d(0, 0, -1), LandingSurface_list)
+    project_index = projectpoint[1]
+    
+    #軌跡を表す
+    if projectpoint[1] != -1:
+        locus_end_point = projectpoint[0]
+    else:
+        locus_end_point = rg.Point3d(descent_point[0], descent_point[1], descent_point[2] - 1000)
+    locus_points = [moved_point, descent_point, locus_end_point]
+    locus = rg.Polyline(locus_points)
+    return project_index, locus
 
-mesh_list = []
-surface = []
-area = []
-locus_list = []
-locus_points_list = []
+
+
+normal_list = []
+barriers_list = []
+
+
+surface_list = []
+area_list = []
+centroid_list = []
+index_list = []
 
 
 #brepのタイプはBrepであるが、実際には単一面なのでsurface。
-for brep_num, brep in enumerate(brep_list):
-    normal_vec = face_normal_vec[brep_num]
-    
+for brep_num, brep in enumerate(slope_roof):
+    normal_vec = rs.SurfaceNormal(brep, (0.5, 0.5))
+    normal_list.append(normal_vec)
     #barriers：そのsurfaceの障壁
     barriers = BarrierFromBrep(brep, normal_vec)
+    barriers_list.append(barriers)
+    
     
     #centroid：そのsurface上にある点群(点群はmesh化した重点)
     mesh = MeshFromSurface(brep, 1500)
-    mesh_list.append(mesh[0])
     surfaces, centroids, areas  = SurfaceFromMesh(mesh)
     for face_num in range(len(surfaces)):
-        moved_point = MovePoint(centroids[face_num], normal_vec, 0.5)
-        surface.append(surfaces[face_num])
-        area.append(areas[face_num])
-        descent_point = DescentPoint(moved_point, normal_vec, barriers)
+        surface_list.append(surfaces[face_num])
+        area_list.append(areas[face_num])
+        centroid_list.append(centroids[face_num])
+        index_list.append(brep_num)
+
+
+surface_type = [0 for cou1 in range(len(surface_list))]
+charge_roof_type = [1 for cou2 in range(len(charge_roof))]
+LandingSurface_type = surface_type + charge_roof_type
+LandingSurface_list = surface_list + charge_roof
+
+
+locus_list = []
+LandingIndex_list = []
+for num in range(len(LandingSurface_list)):
+    if LandingSurface_type[num] == 0:
+        centroid = centroid_list[num]
+        normal_vec = normal_list[index_list[num]]
+        barriers = barriers_list[index_list[num]]
         
-        projectpoint = ghcomp.ProjectPoint(descent_point, rg.Vector3d(0, 0, -1), Landingsurface_list)
-        if projectpoint[1] != -1:
-            locus_end_point = projectpoint[0]
-        else:
-            locus_end_point = rg.Point3d(descent_point[0], descent_point[1], descent_point[2] - 10000)
-        locus_points = [moved_point, descent_point, locus_end_point]
-        locus = rg.Polyline(locus_points)
+        
+        project_index, locus = RainFlow(centroid, normal_vec, barriers, LandingSurface_list)
+        LandingIndex_list.append(project_index)
         locus_list.append(locus)
+    else:
+        print(1)        
