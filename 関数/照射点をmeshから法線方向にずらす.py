@@ -2,11 +2,13 @@ import Rhino.Geometry as rg
 import ghpythonlib.components as ghcomp
 
 #ProjectPointに引っかからないように照射点をmeshから法線方向にずらす
-def MovePoint(normal_unit, length, point):
-    normal = normal_unit * length
+def MovePoint(point, vector, length):
+    rg.Vector3d.Unitize(vector)
+    normal = vector * length
     transform = rg.Transform.Translation(normal)
     rg.Point3d.Transform(point, transform)
     return point
+
 #ずらす長さ
 length = 0.1
 def NormalOffset_FromMesh(mesh):
