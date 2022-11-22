@@ -1,12 +1,10 @@
 #Input
 #brep_list, List Access, Brep
+#Landingsurface_list, List Access, Geometry
 #face_normal_vec, List Access, Vector3d
 
 #Output
 #mesh_list, mesh
-#surface, meshのfaceをsurfaceにしたもの
-#centroid, meshのfaceの重心
-#area, meshのfaceの面積
 #locus_list, 重心から流れる軌跡
 
 
@@ -17,12 +15,13 @@ import ghpythonlib.components as ghcomp
 
 #法線方向から面を流れる方向を求める関数
 def FlowVector(normal_vec):
-    x = normal_vec[0]
-    y = normal_vec[1]
     if normal_vec[2] == 0:
         z = -1
     else:
-        z = -(x**2 + y**2) / normal_vec[2]
+        z = -1 * ((normal_vec[0]**2 + normal_vec[1]**2)**(1/2))
+    k = (-1) * ((normal_vec[2] * z) / (normal_vec[0]**2 + normal_vec[1]**2))
+    x = normal_vec[0] * k
+    y = normal_vec[1] * k
     flow_vec = rg.Vector3d(x, y, z)
     return flow_vec
 
@@ -53,6 +52,13 @@ def BarrierFromBrep(Brep, normal_vec):
         barriers.append(barrier)
     return barriers
 
+#PointをVector方向へ指定の長さ分ずらす
+def MovePoint(point, vector, length):
+    rg.Vector3d.Unitize(vector)
+    normal = vector * length
+    transform = rg.Transform.Translation(normal)
+    rg.Point3d.Transform(point, transform)
+    return point
 
 #Meshの各FaceをSurface, 重心, 面積を返す関数
 def SurfaceFromMesh(mesh):
@@ -87,23 +93,11 @@ def SurfaceFromMesh(mesh):
     return surface_list, centroid_list, area_list
 
 
-
-
 mesh_list = []
 surface = []
-centroid = []
 area = []
 locus_list = []
-
-
-Landingsurface_list = []
-pop_index_list = []
-for brep_num0, brep0 in enumerate(brep_list):
-    mesh = MeshFromSurface(brep0, 1500)
-    surfaces, dummy1, dummy2  = SurfaceFromMesh(mesh)
-    for sur in surfaces:
-        Landingsurface_list.append(sur)
-        pop_index_list.append(brep_num0)
+locus_points_list = []
 
 
 #brepのタイプはBrepであるが、実際には単一面なのでsurface。
@@ -113,41 +107,21 @@ for brep_num, brep in enumerate(brep_list):
     #barriers：そのsurfaceの障壁
     barriers = BarrierFromBrep(brep, normal_vec)
     
-    
-    #一時的にリストから削除して元に戻す(削除)
-    #pop_index_listと同じ数字をlistから削除する
-    val = brep_num
-    pop_list = [i for i, x in enumerate(pop_index_list) if x == val]
-    add_list = []
-    for add_num in sorted(pop_list, reverse=False):
-        add = Landingsurface_list[add_num]
-        add_list.append(add)
-    for pop_num in sorted(pop_list, reverse=True):
-        Landingsurface_list.pop(pop_num)
-    
-    
     #centroid：そのsurface上にある点群(点群はmesh化した重点)
     mesh = MeshFromSurface(brep, 1500)
     mesh_list.append(mesh[0])
     surfaces, centroids, areas  = SurfaceFromMesh(mesh)
     for face_num in range(len(surfaces)):
+        moved_point = MovePoint(centroids[face_num], normal_vec, 0.5)
         surface.append(surfaces[face_num])
-        centroid.append(centroids[face_num])
         area.append(areas[face_num])
-        descent_point = DescentPoint(centroids[face_num], normal_vec, barriers)
-        
+        descent_point = DescentPoint(moved_point, normal_vec, barriers)
         
         projectpoint = ghcomp.ProjectPoint(descent_point, rg.Vector3d(0, 0, -1), Landingsurface_list)
         if projectpoint[1] != -1:
             locus_end_point = projectpoint[0]
         else:
-            locus_end_point = rg.Point3d(descent_point[0], descent_point[1], descent_point[2] - 1000)
-        locus_points = [centroids[face_num], descent_point, locus_end_point]
+            locus_end_point = rg.Point3d(descent_point[0], descent_point[1], descent_point[2] - 10000)
+        locus_points = [moved_point, descent_point, locus_end_point]
         locus = rg.Polyline(locus_points)
         locus_list.append(locus)
-
-    
-    
-    #一時的にリストから削除して元に戻す(復元)
-    for restore_num, restore_vel in enumerate(sorted(pop_list, reverse=False)):
-        Landingsurface_list.insert(restore_vel, add_list[restore_num])
