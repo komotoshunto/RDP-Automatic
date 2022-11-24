@@ -10,7 +10,7 @@ import rhinoscriptsyntax as rs
 import Rhino.Geometry as rg
 import math
 
-
+#法線とOriginから、見やすく面に水平なPlaneを返す関数
 def TextVisible_flame(normal, origin):
     if normal[2] == 1 or normal[2] == -1:
         flame_x = rg.Vector3d(1, 0, 0)
