@@ -18,3 +18,8 @@ for k in list_dic:
     key = "vector"
     val = k[key]
     print(val)
+
+#(0, 3, 5)
+#(4, -3, -6)
+#(-3, 7, -2)
+#(4, 8, 2)
