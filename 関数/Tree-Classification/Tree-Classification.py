@@ -9,7 +9,7 @@ take_roof_area = [376, 325, 324]
 adjacency = [[1, 8], [2, 9], [3, 9],[4, 10],[5, 10],[6, 11],[7, 12],[8, 13],[9, 100],[10, 14],[11, 15],[12, 7],[13, 100],[14, 200],[15, 300],[16, 300], [18, 17], [17, -1], [19, 20], [20, 19]]
 
 #-----------------------------------------------------------------------------------------------------------------------------
-def RainFlow_judge(slope_roof, slope_roof_area, take_roof, take_roof_area):
+def RainFlow_judge(adjacency, slope_roof, slope_roof_area, take_roof, take_roof_area):
     #どの屋根にも落ちない屋根を追加する
     take_roof.append(-1)
     take_roof_area.append(0)
@@ -53,7 +53,7 @@ def RainFlow_judge(slope_roof, slope_roof_area, take_roof, take_roof_area):
     return goalroof_list, take_roof_area
 
 
-goalroof_list, take_roof_area = RainFlow_judge(slope_roof, slope_roof_area, take_roof, take_roof_area)
+goalroof_list, take_roof_area = RainFlow_judge(adjacency, slope_roof, slope_roof_area, take_roof, take_roof_area)
 print(goalroof_list)
 print(take_roof_area)
 
