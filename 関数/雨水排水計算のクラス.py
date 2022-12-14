@@ -1,10 +1,14 @@
+import math
+
+#雨水排水計算
 class RdCount:
-    def __init__(self, total_area, precipitation):
+    def __init__(self, roof_id, total_area, precipitation):
         self.total_area = total_area
         self.precipitation = precipitation
+        self.roof_id = roof_id
     
-    #雨水排水設計基準
-    def pipe_cou(self):
+    #雨水排水の計算
+    def rd_count(self):
         #管径
         r_pipe = ["A100", "A125", "A150", "A200"]
 
@@ -44,10 +48,11 @@ class RdCount:
             self.Leak_PipeCount_dic[j] = Leak_pipe_cou
         return self.method, self.NoLeak_PipeCount_dic, self.Leak_PipeCount_dic
     
-    #Rhino上で情報を表示するための関数
-    def pipe_cou_display(self):
-        self.pipe_cou()
-        pipe_inf = ["計算方法: " + str(self.method),
+    #表示させるための関数
+    def rd_cou_display(self):
+        self.rd_count()
+        pipe_inf = ["屋根ID: " + str(self.roof_id),
+                    "計算方法: " + str(self.method),
                     "合計の受持ち面積(㎡): " + str(self.total_area),
                     "侵入の恐れがない場合(本 + 1本)",
                     "A100: " + str(self.NoLeak_PipeCount_dic["A100"] + 1),
@@ -61,11 +66,9 @@ class RdCount:
                     "A200: " + str(self.Leak_PipeCount_dic["A200"] + 1)]
         return pipe_inf
 
-    
-#-------------------------------------------------------------------------------------
-pipe = RdCount(4000, 60)
-b = pipe.pipe_cou_display()
+#---------------------------------------------------------------------------------------------
+pipe = RdCount(23, 4000, 60)
+b = pipe.rd_cou_display()
 print(b)
-#-------------------------------------------------------------------------------------
-#['計算方法: 簡略法', '合計の受持ち面積(㎡): 4000', '侵入の恐れがない場合(本 + 1本)', 'A100: 35', 'A125: 20', 'A150: 13', 'A200: 7', '侵入の恐れがある場合(本 + 1本)', 'A100: 68', 'A125: 38', 'A150: 24', 'A200: 12']
-
+#---------------------------------------------------------------------------------------------
+['屋根ID: 23', '計算方法: 簡略法', '合計の受持ち面積(㎡): 4000', '侵入の恐れがない場合(本 + 1本)', 'A100: 35', 'A125: 20', 'A150: 13', 'A200: 7', '侵入の恐れがある場合(本 + 1本)', 'A100: 68', 'A125: 38', 'A150: 24', 'A200: 12']
