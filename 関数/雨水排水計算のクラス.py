@@ -36,35 +36,35 @@ class RdCount:
             leak_dic = correction_leak_dic
             self.method = "補正法"
 
-        self.NoLeak_PipeCount_dic = {}
-        self.Leak_PipeCount_dic = {}
+        self.NoLeak_RdCount_dic = {}
+        self.Leak_RdCount_dic = {}
         for j in r_pipe:
             NoLeak_ans = self.total_area / noleak_dic[j]
             NoLeak_pipe_cou = math.ceil(NoLeak_ans)
-            self.NoLeak_PipeCount_dic[j] = NoLeak_pipe_cou
+            self.NoLeak_RdCount_dic[j] = NoLeak_pipe_cou
 
             Leak_ans = self.total_area / leak_dic[j]
             Leak_pipe_cou = math.ceil(Leak_ans)
-            self.Leak_PipeCount_dic[j] = Leak_pipe_cou
-        return self.method, self.NoLeak_PipeCount_dic, self.Leak_PipeCount_dic
+            self.Leak_RdCount_dic[j] = Leak_pipe_cou
+        return self.method, self.NoLeak_RdCount_dic, self.Leak_RdCount_dic
     
     #表示させるための関数
     def rd_cou_display(self):
         self.rd_count()
-        pipe_inf = ["屋根ID: " + str(self.roof_id),
+        rd_inf = ["屋根ID: " + str(self.roof_id),
                     "計算方法: " + str(self.method),
                     "合計の受持ち面積(㎡): " + str(self.total_area),
                     "侵入の恐れがない場合(本 + 1本)",
-                    "A100: " + str(self.NoLeak_PipeCount_dic["A100"] + 1),
-                    "A125: " + str(self.NoLeak_PipeCount_dic["A125"] + 1),
-                    "A150: " + str(self.NoLeak_PipeCount_dic["A150"] + 1),
-                    "A200: " + str(self.NoLeak_PipeCount_dic["A200"] + 1),
+                    "A100: " + str(self.NoLeak_RdCount_dic["A100"] + 1),
+                    "A125: " + str(self.NoLeak_RdCount_dic["A125"] + 1),
+                    "A150: " + str(self.NoLeak_RdCount_dic["A150"] + 1),
+                    "A200: " + str(self.NoLeak_RdCount_dic["A200"] + 1),
                     "侵入の恐れがある場合(本 + 1本)",
-                    "A100: " + str(self.Leak_PipeCount_dic["A100"] + 1),
-                    "A125: " + str(self.Leak_PipeCount_dic["A125"] + 1),
-                    "A150: " + str(self.Leak_PipeCount_dic["A150"] + 1),
-                    "A200: " + str(self.Leak_PipeCount_dic["A200"] + 1)]
-        return pipe_inf
+                    "A100: " + str(self.Leak_RdCount_dic["A100"] + 1),
+                    "A125: " + str(self.Leak_RdCount_dic["A125"] + 1),
+                    "A150: " + str(self.Leak_RdCount_dic["A150"] + 1),
+                    "A200: " + str(self.Leak_RdCount_dic["A200"] + 1)]
+        return rd_inf
 
 #---------------------------------------------------------------------------------------------
 pipe = RdCount(23, 4000, 60)
