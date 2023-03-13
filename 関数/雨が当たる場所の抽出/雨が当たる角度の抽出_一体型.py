@@ -1,3 +1,14 @@
+#Input
+#Roof_list, List Access, Mesh
+#rain_angle, Item Access, int
+#barrier, List Access, Geometry Base
+
+#Output
+#centroid_list, meshの各重心
+#vec, 
+#bool_list, 雨が当たるかの判定(True:当たる, False:当たらない)
+
+
 import rhinoscriptsyntax as rs
 import Rhino.Geometry as rg
 import ghpythonlib.components as ghcomp
